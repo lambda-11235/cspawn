@@ -1,0 +1,54 @@
+
+# CSpawn
+
+Ever want to use C for shell programming? Well know you can (kinda)!
+
+## Building
+
+Copy the files from `include/` and `src/` into your projects directory.
+
+## Examples
+
+See the `examples/` for the full source.
+
+-------------------------------------------------------------------------------
+
+Shell
+```
+    ls | cat
+```
+C
+```
+    SPAWN_NIO(true, SPAWN_ARGS("ls"), SPAWN_ARGS("cat"));
+```
+
+-------------------------------------------------------------------------------
+
+Shell
+```
+    in_file > grep Lorem | tr , ; | tr . ! > out_file
+```
+C
+```
+    struct cs_pipe inp;
+    struct cs_pipe outp;
+
+    if (cs_pipe_create_read_file(&inp, in_file) == -1) {
+        printf("Could not read %s\n", in_file);
+
+        return 1;
+    }
+
+    if (cs_pipe_create_write_file(&outp, out_file) == -1) {
+        printf("Could not write %s\n", out_file);
+
+        return 1;
+    }
+
+    SPAWN(&inp, &outp, true,
+            SPAWN_ARGS("grep", "Lorem"),
+            SPAWN_ARGS("tr", ",", ";"),
+            SPAWN_ARGS("tr", ".", "!"));
+```
+
+-------------------------------------------------------------------------------
